@@ -11,13 +11,13 @@ import { Button } from "~/components/ui/button";
 import {
   CheckIcon,
   LockIcon,
-  MenuIcon,
   MergeIcon,
   MountainIcon,
   PieChartIcon,
   ScalingIcon,
   WorkflowIcon,
 } from "~/components/Icons";
+import { webLinks } from "~/config/nav";
 // import Image from "next/image";
 
 export default function HomePage() {
@@ -29,25 +29,16 @@ export default function HomePage() {
           <span className="sr-only">Acme SaaS</span>
         </Link>
         <nav className="ml-auto flex gap-2 sm:gap-6">
-          <Button variant="link" asChild className="hidden sm:block">
-            <Link href="/log-in">Log In</Link>
-          </Button>
-          <Button variant="link" asChild className="hidden sm:block">
-            <Link href="#features">Features</Link>
-          </Button>{" "}
-          <Button variant="link" asChild className="hidden sm:block">
-            <Link href="#testimonials">Testimonials</Link>
-          </Button>
-          <Button variant="link" asChild className="hidden sm:block">
-            <Link href="#pricing">Pricing</Link>
-          </Button>
-          <Button variant="link" asChild className="hidden sm:block">
-            <Link href="#contact">Contact</Link>
-          </Button>
-          <Button className="sm:hidden" size="icon" variant="ghost">
-            <MenuIcon className="h-6 w-6" />
-            <span className="sr-only">Toggle navigation</span>
-          </Button>
+          {webLinks.map((link) => (
+            <Button
+              key={link.title}
+              variant="link"
+              asChild
+              className="hidden sm:block"
+            >
+              <Link href={link.href}>{link.title}</Link>
+            </Button>
+          ))}
         </nav>
       </header>
       <main className="flex-1">
