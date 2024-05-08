@@ -55,7 +55,7 @@ export default function HomePage() {
                 </p>
                 <div className="mt-6 flex flex-col space-x-4 sm:flex-row">
                   <Button asChild>
-                    <Link href="/sign-up">Sign Up</Link>
+                    <Link href="/api/auth/signin">Sign Up</Link>
                   </Button>
 
                   <Button variant="secondary" asChild>
