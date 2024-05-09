@@ -10,7 +10,5 @@ export default function AuthLayout({
 }) {
   const { data: session, status } = useSession();
 
-  if (status === "authenticated") redirect("/dashboard");
-
   return <div className="bg-muted h-screen pt-8">{children}</div>;
 }
