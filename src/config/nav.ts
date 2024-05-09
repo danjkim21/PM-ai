@@ -3,5 +3,5 @@ export const webLinks = [
   { href: "#testimonials", title: "Testimonials" },
   { href: "#pricing", title: "Pricing" },
   { href: "#contact", title: "Contact" },
-  { href: "/sign-in", title: "Sign In" },
+  { href: "/api/auth/signin", title: "Sign In" },
 ];
