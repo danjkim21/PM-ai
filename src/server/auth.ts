@@ -52,13 +52,6 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
-    // TODO: Remove Discord once other providers are configured
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
-
-    // TODO: implement Atlassian Provider
     AtlassianProvider({
       clientId: env.ATLASSIAN_CLIENT_ID,
       clientSecret: env.ATLASSIAN_CLIENT_SECRET,
@@ -70,6 +63,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
+    // TODO: Integrate remaining Providers
     GitHubProvider({
       clientId: env.GITHUB_ID,
       clientSecret: env.GITHUB_SECRET,
