@@ -108,7 +108,7 @@ export default function DashboardPage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-start py-2">
-      <h1 className="text-center text-2xl font-bold">
+      <h1 className="text-center text-3xl font-bold">
         Dashboard - {session?.user?.name}
       </h1>
 
@@ -205,12 +205,14 @@ export default function DashboardPage() {
         </form>
       </Form>
 
-      <section className="">
+      <section className="mt-10 flex w-full max-w-xl flex-col gap-4">
         {generatedTicket && (
-          <>
-            <h2 className="">Your generated ticket</h2>
+          <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-md">
+            <h2 className="text-center text-2xl font-bold">
+              Your generated ticket
+            </h2>
             <div className="whitespace-pre-wrap">{generatedTicket}</div>
-          </>
+          </article>
         )}
       </section>
     </main>
