@@ -16,6 +16,9 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { useSession } from "next-auth/react";
+import { useChat } from "ai/react";
+import { getTicket } from "~/app/actions/chat/mutations";
 
 const ticketTemplate = `Title: [Feature Name] - Implement [Specific Component/Functionality]
 Assignee: [Developer's Name]
@@ -70,6 +73,9 @@ const formSchema = z.object({
 });
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const { messages, input, handleInputChange, handleSubmit } = useChat();
+
   const [loading, setLoading] = useState(false);
   const [generatedTicket, setGeneratedTicket] = useState("");
 
@@ -89,33 +95,22 @@ export default function DashboardPage() {
     "${values.template}."
     Finally analyze the story complexity (if high complexity, offer suggestions to break down the ticket to be more manageable), identify any user pain points to consider, and suggest a general data structure/schema for the success response to help the backend team.`;
 
-    console.log(prompt);
-
     setGeneratedTicket("");
     setLoading(true);
 
-    // const response = await fetch("/api/generate", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     prompt,
-    //   }),
-    // });
+    const { text, finishReason, usage } = await getTicket(prompt);
 
-    // if (!response.ok) {
-    //   throw new Error(response.statusText);
-    // }
+    console.log(text, finishReason, usage);
 
-    // const answer = await response.json();
-    // setGeneratedTicket(answer.choices[0].text);
-    // setLoading(false);
+    setGeneratedTicket(text);
+    setLoading(false);
   };
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-start py-2">
-      <h1 className="text-center text-2xl font-bold">Dashboard</h1>
+      <h1 className="text-center text-2xl font-bold">
+        Dashboard - {session?.user?.name}
+      </h1>
 
       <p className="mt-5 text-slate-500">0 tickets generated so far.</p>
 
@@ -210,27 +205,14 @@ export default function DashboardPage() {
         </form>
       </Form>
 
-      <div className="...">
+      <section className="">
         {generatedTicket && (
           <>
-            <div>
-              <h2 className="...">Your generated bios</h2>
-            </div>
-            <div className="...">
-              {generatedTicket
-                .substring(generatedTicket.indexOf("1") + 3)
-                .split("2.")
-                .map((generatedTicket) => {
-                  return (
-                    <div className="..." key={generatedTicket}>
-                      <p>{generatedTicket}</p>
-                    </div>
-                  );
-                })}
-            </div>
+            <h2 className="">Your generated ticket</h2>
+            <div className="whitespace-pre-wrap">{generatedTicket}</div>
           </>
         )}
-      </div>
+      </section>
     </main>
   );
 }
