@@ -120,115 +120,117 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-start py-2">
-      <h1 className="text-center text-3xl font-bold">
-        Dashboard - {session?.user?.name}
-      </h1>
+    <>
+      <header className="bg-background sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b px-4">
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+      </header>
 
-      <p className="mt-5 text-slate-500">0 tickets generated so far.</p>
+      <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-start py-2">
+        <p className="mt-5 text-slate-500">0 tickets generated so far.</p>
 
-      <Form {...form}>
-        <form
-          className="mt-10 flex w-full max-w-xl flex-col gap-4"
-          onSubmit={form.handleSubmit(generateBio)}
-        >
-          <FormField
-            control={form.control}
-            name="story"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center space-x-3">
-                  <p className="text-left font-medium">
-                    1) Copy your user story
-                    <span className="text-slate-500">
-                      (or write a few sentences about your task)
-                    </span>
-                    .
-                  </p>
-                </div>
-                <FormLabel className="sr-only">User Task</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={4}
-                    placeholder={
-                      "As a user, I would like to access my profile page and update my username, email and bio..."
-                    }
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+        <Form {...form}>
+          <form
+            className="mt-10 flex w-full max-w-xl flex-col gap-4"
+            onSubmit={form.handleSubmit(generateBio)}
+          >
+            <FormField
+              control={form.control}
+              name="story"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center space-x-3">
+                    <p className="text-left font-medium">
+                      1) Copy your user story
+                      <span className="text-slate-500">
+                        (or write a few sentences about your task)
+                      </span>
+                      .
+                    </p>
+                  </div>
+                  <FormLabel className="sr-only">User Task</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      placeholder={
+                        "As a user, I would like to access my profile page and update my username, email and bio..."
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="photo"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center space-x-3">
+                    <p className="text-left font-medium">
+                      Or upload a photo of your Figma component
+                    </p>
+                  </div>
+                  <FormLabel className="sr-only">Photo</FormLabel>
+                  <FormControl>
+                    <Input id="picture" type="file" disabled {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Feature only available for __ tier plan users
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="template"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center space-x-3">
+                    <p className="text-left font-medium">
+                      2) Review and modify your ticket template .
+                    </p>
+                  </div>
+                  <FormLabel className="sr-only"> Jira Template</FormLabel>
+                  <FormControl>
+                    <Textarea id="template" rows={12} disabled {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Feature only available for __ tier plan users
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {!loading && (
+              <Button className="w-full" type="submit">
+                Generate your ticket &rarr;
+              </Button>
             )}
-          />
-
-          <FormField
-            control={form.control}
-            name="photo"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center space-x-3">
-                  <p className="text-left font-medium">
-                    Or upload a photo of your Figma component
-                  </p>
-                </div>
-                <FormLabel className="sr-only">Photo</FormLabel>
-                <FormControl>
-                  <Input id="picture" type="file" disabled {...field} />
-                </FormControl>
-                <FormDescription>
-                  Feature only available for __ tier plan users
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
+            {loading && (
+              <Button className="w-full" type="submit" disabled>
+                ... Generating
+              </Button>
             )}
-          />
+          </form>
+        </Form>
 
-          <FormField
-            control={form.control}
-            name="template"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center space-x-3">
-                  <p className="text-left font-medium">
-                    2) Review and modify your ticket template .
-                  </p>
-                </div>
-                <FormLabel className="sr-only"> Jira Template</FormLabel>
-                <FormControl>
-                  <Textarea id="template" rows={12} disabled {...field} />
-                </FormControl>
-                <FormDescription>
-                  Feature only available for __ tier plan users
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {!loading && (
-            <Button className="w-full" type="submit">
-              Generate your ticket &rarr;
-            </Button>
+        <section className="mt-10 flex w-full max-w-xl flex-col gap-4">
+          {generatedTicket && (
+            <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-md">
+              <h2 className="text-center text-2xl font-bold">
+                Your generated ticket
+              </h2>
+              <div className="whitespace-pre-wrap">{generatedTicket}</div>
+            </article>
           )}
-          {loading && (
-            <Button className="w-full" type="submit" disabled>
-              ... Generating
-            </Button>
-          )}
-        </form>
-      </Form>
-
-      <section className="mt-10 flex w-full max-w-xl flex-col gap-4">
-        {generatedTicket && (
-          <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-md">
-            <h2 className="text-center text-2xl font-bold">
-              Your generated ticket
-            </h2>
-            <div className="whitespace-pre-wrap">{generatedTicket}</div>
-          </article>
-        )}
-      </section>
-      <Toaster />
-    </main>
+        </section>
+        <Toaster />
+      </main>
+    </>
   );
 }
