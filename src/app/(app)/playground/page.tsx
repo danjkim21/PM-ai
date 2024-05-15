@@ -1,6 +1,5 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useChat } from "ai/react";
 import {
   Bird,
   CornerDownLeft,
