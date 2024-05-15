@@ -67,7 +67,6 @@ const formSchema = z.object({
 
 export default function PlaygroundPage() {
   const { data: session } = useSession();
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
 
   const [loading, setLoading] = useState(false);
   const [generatedTicket, setGeneratedTicket] = useState("");
