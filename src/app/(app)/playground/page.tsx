@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { readStreamableValue } from "ai/rsc";
 import {
   Bird,
   CornerDownLeft,
@@ -14,7 +15,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getTicket } from "~/app/actions/chat/mutations";
+import { generateTicketStream, getTicket } from "~/app/actions/chat/mutations";
 
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -65,7 +66,7 @@ const formSchema = z.object({
 });
 
 export default function PlaygroundPage() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   const [loading, setLoading] = useState(false);
   const [generatedTicket, setGeneratedTicket] = useState("");
@@ -90,21 +91,21 @@ export default function PlaygroundPage() {
     setLoading(true);
 
     try {
-      const { text, finishReason, usage } = await getTicket({
-        userId: session?.user.id,
-        message: prompt,
-      });
-      setGeneratedTicket(text);
-      setLoading(false);
+      const { output } = await generateTicketStream({ message: prompt });
 
-      console.log(text, finishReason, usage);
+      for await (const delta of readStreamableValue(output)) {
+        setGeneratedTicket(
+          (currentGeneration) => `${currentGeneration}${delta}`,
+        );
+      }
     } catch (error) {
-      setLoading(false);
       if (error instanceof Error) {
         toast.warning(error.message);
       } else {
         toast.warning("An unexpected error occurred.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -438,7 +439,12 @@ export default function PlaygroundPage() {
                 </Button>
               )}
               {loading && (
-                <Button className="w-full" type="submit" disabled>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="ml-auto gap-1.5"
+                  disabled
+                >
                   ... Generating
                 </Button>
               )}
