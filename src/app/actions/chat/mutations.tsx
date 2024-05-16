@@ -6,6 +6,9 @@ import { rateLimitByKey } from "~/lib/limiter";
 import { streamText } from "ai";
 import { createStreamableValue } from "ai/rsc";
 
+// TODO: refactor rate limiting using Vercel KV and Upstash Ratelimit
+// https://sdk.vercel.ai/docs/advanced/rate-limiting
+
 /**
  * Retrieves a ticket for a user based on the provided message.
  *
@@ -41,7 +44,6 @@ export async function getTicket({
  * @return {Object} An object containing the generated ticket output.
  */
 export async function generateTicketStream({ message }: { message: string }) {
-  // TODO: refactor and implement rate limiting by user id
   const stream = createStreamableValue("");
 
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
