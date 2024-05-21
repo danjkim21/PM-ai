@@ -5,6 +5,7 @@ import { openai } from "@ai-sdk/openai";
 import { rateLimitByKey } from "~/lib/limiter";
 import { streamText } from "ai";
 import { createStreamableValue } from "ai/rsc";
+import { type ticketFormSchema } from "~/app/(app)/playground/page";
 
 // TODO: refactor rate limiting using Vercel KV and Upstash Ratelimit
 // https://sdk.vercel.ai/docs/advanced/rate-limiting
@@ -38,19 +39,33 @@ export async function getTicket({
 }
 
 /**
- * Generates a ticket based on the provided message using text streaming.
+ * Generates a streamable value of a professional Jira ticket based on the provided user story and template.
  *
- * @param {string} message - The message to generate the ticket from.
- * @return {Object} An object containing the generated ticket output.
+ * @param {Object} params - The parameters for generating the ticket.
+ * @param {z.infer<typeof formSchema>} params.values - The values for generating the ticket.
+ * @param {string} params.values.story - The user story for generating the ticket.
+ * @param {string} params.values.assigneeType - The type of assignee for the ticket.
+ * @param {string} params.values.template - The template for the ticket.
+ * @return {Promise<{output: string}>} A promise that resolves to an object containing the generated ticket as a string.
  */
-export async function generateTicketStream({ message }: { message: string }) {
+export async function generateTicketStream({
+  values,
+}: {
+  values: ticketFormSchema;
+}) {
   const stream = createStreamableValue("");
+
+  const userPrompt = `Given this user story: "${values.story}${
+    values.story.endsWith(".") ? "" : "."
+  }" Generate a professional Jira ticket for a ${values.assigneeType} type assignee in the format that adheres to this strict Jira template:
+    "${values.template}."
+    Finally analyze the story complexity (if high complexity, offer suggestions to break down the ticket to be more manageable), identify any user pain points to consider, and suggest a general data structure/schema for the success response to help the backend team.`;
 
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   (async () => {
     const { textStream } = await streamText({
       model: openai("gpt-3.5-turbo"),
-      prompt: message,
+      prompt: userPrompt,
     });
 
     for await (const delta of textStream) {

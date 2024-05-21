@@ -10,12 +10,11 @@ import {
   Share,
   Turtle,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { generateTicketStream, getTicket } from "~/app/actions/chat/mutations";
+import { generateTicketStream } from "~/app/actions/chat/mutations";
 
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -56,18 +55,20 @@ import {
 import { defaultTemplate } from "~/config/ticket-templates";
 
 const formSchema = z.object({
-  story: z.string().min(2, {
-    message: "Story must be at least 2 characters.",
+  story: z.string().min(5, {
+    message: "Story must be at least 6 characters.",
   }),
   photo: z.string().optional(),
+  assigneeType: z.string().min(1, {
+    message: "Assignee type is required.",
+  }),
   template: z.string().min(2, {
-    message: "Template must be at least 2 characters.",
+    message: "Template is required",
   }),
 });
+export type ticketFormSchema = z.infer<typeof formSchema>;
 
 export default function PlaygroundPage() {
-  // const { data: session } = useSession();
-
   const [loading, setLoading] = useState(false);
   const [generatedTicket, setGeneratedTicket] = useState("");
 
@@ -76,22 +77,17 @@ export default function PlaygroundPage() {
     defaultValues: {
       story: "",
       photo: "",
+      assigneeType: "",
       template: defaultTemplate,
     },
   });
 
-  const generateTicket = async (values: z.infer<typeof formSchema>) => {
-    const prompt = `Given this user story: "${values.story}${
-      values.story.endsWith(".") ? "" : "."
-    }" Generate a professional Jira ticket in the format that adheres to this strict Jira template: 
-    "${values.template}."
-    Finally analyze the story complexity (if high complexity, offer suggestions to break down the ticket to be more manageable), identify any user pain points to consider, and suggest a general data structure/schema for the success response to help the backend team.`;
-
+  const generateTicket = async (values: ticketFormSchema) => {
     setGeneratedTicket("");
     setLoading(true);
 
     try {
-      const { output } = await generateTicketStream({ message: prompt });
+      const { output } = await generateTicketStream({ values });
 
       for await (const delta of readStreamableValue(output)) {
         setGeneratedTicket(
@@ -341,12 +337,42 @@ export default function PlaygroundPage() {
                   placeholder="0.7"
                   disabled
                 />
+                <FormDescription>
+                  Feature only available for __ tier plan users
+                </FormDescription>
               </div>
             </fieldset>
             <fieldset className="grid gap-6 rounded-lg border p-4">
               <legend className="-ml-1 px-1 text-sm font-medium">
                 Review & modify ticket template
               </legend>
+              <div className="grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="assigneeType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assignee Type</FormLabel>
+                      <FormControl>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a type" />
+                          </SelectTrigger>
+                          <SelectContent {...field}>
+                            <SelectItem value="frontend">Front End</SelectItem>
+                            <SelectItem value="backend">Back End</SelectItem>
+                            <SelectItem value="design">Design</SelectItem>
+                            <SelectItem value="product">
+                              Product Management
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="grid gap-3">
                 {/* TODO: update form fields with react-hook-form */}
                 <Label htmlFor="role">Preset</Label>
