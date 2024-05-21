@@ -8,7 +8,7 @@ Due Date: [MM/DD/YYYY]
 
 User Story
 As a [type of user], I want [the goal], so that [reason].
-Acceptance Criteria (Break this down by assignee type: front-end engineers, back-end engineers, and ux-ui designers.  Ensure that each acceptance criteria has at least two bullet points.)
+Acceptance Criteria (Break this down by selected assignee type: front-end engineers, back-end engineers, and ux-ui designers.  Ensure that each acceptance criteria has at least two bullet points.)
 1. Criteria 1: [Description of what is to be achieved or validated]
 • [Specific details]
 • [Specific details]
