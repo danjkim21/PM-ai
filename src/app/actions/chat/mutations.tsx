@@ -5,8 +5,7 @@ import { openai } from "@ai-sdk/openai";
 import { rateLimitByKey } from "~/lib/limiter";
 import { streamText } from "ai";
 import { createStreamableValue } from "ai/rsc";
-import { z } from "zod";
-import { formSchema } from "~/app/(app)/playground/page";
+import { type ticketFormSchema } from "~/app/(app)/playground/page";
 
 // TODO: refactor rate limiting using Vercel KV and Upstash Ratelimit
 // https://sdk.vercel.ai/docs/advanced/rate-limiting
@@ -52,7 +51,7 @@ export async function getTicket({
 export async function generateTicketStream({
   values,
 }: {
-  values: z.infer<typeof formSchema>;
+  values: ticketFormSchema;
 }) {
   const stream = createStreamableValue("");
 

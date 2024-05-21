@@ -54,7 +54,7 @@ import {
 } from "~/components/ui/tooltip";
 import { defaultTemplate } from "~/config/ticket-templates";
 
-export const formSchema = z.object({
+const formSchema = z.object({
   story: z.string().min(5, {
     message: "Story must be at least 6 characters.",
   }),
@@ -66,6 +66,7 @@ export const formSchema = z.object({
     message: "Template is required",
   }),
 });
+export type ticketFormSchema = z.infer<typeof formSchema>;
 
 export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
@@ -81,7 +82,7 @@ export default function PlaygroundPage() {
     },
   });
 
-  const generateTicket = async (values: z.infer<typeof formSchema>) => {
+  const generateTicket = async (values: ticketFormSchema) => {
     setGeneratedTicket("");
     setLoading(true);
 
