@@ -354,7 +354,7 @@ export default function PlaygroundPage() {
                     <FormItem>
                       <FormLabel>Assignee Type</FormLabel>
                       <FormControl>
-                        <Select>
+                        <Select onValueChange={field.onChange}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a type" />
                           </SelectTrigger>
