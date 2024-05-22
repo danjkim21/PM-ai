@@ -16,7 +16,7 @@ export const webLinks = [
 
 export const appPageLinks = [
   { href: "/playground", title: "Playground", icon: SquareTerminal },
-  { href: "/documentation", title: "Documentation", icon: Book },
+  { href: "/projects", title: "Projects", icon: Book },
   { href: "/settings", title: "Settings", icon: Settings2 },
 ];
 
