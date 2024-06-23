@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -49,13 +51,18 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { useRouter } from "next/navigation";
 
 export default function ProjectDetailPage({
   params,
 }: {
   params: { projectId: string };
 }) {
-  console.log(params.projectId);
+  const router = useRouter();
+
+  const navigateBack = () => {
+    router.back();
+  };
 
   return (
     <div className="bg-muted/40 flex min-h-screen w-full flex-col">
@@ -132,7 +139,12 @@ export default function ProjectDetailPage({
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <div className="mx-auto grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" className="h-7 w-7">
+              <Button
+                onClick={navigateBack}
+                variant="outline"
+                size="icon"
+                className="h-7 w-7"
+              >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
               </Button>
@@ -188,8 +200,13 @@ export default function ProjectDetailPage({
                     <Tabs defaultValue="all" className="">
                       <TabsList>
                         <TabsTrigger value="all">All</TabsTrigger>
-                        <TabsTrigger value="drafts">Drafts</TabsTrigger>
-                        <TabsTrigger value="archived">Archived</TabsTrigger>
+                        {/* TODO: Remove disabled attr when you have data & filtering implemented */}
+                        <TabsTrigger value="drafts" disabled>
+                          Drafts
+                        </TabsTrigger>
+                        <TabsTrigger value="archived" disabled>
+                          Archived
+                        </TabsTrigger>
                       </TabsList>
                       <TabsContent value="all">
                         <Table>
@@ -214,6 +231,12 @@ export default function ProjectDetailPage({
                       <TabsContent value="drafts"></TabsContent>
                       <TabsContent value="archived"></TabsContent>
                     </Tabs>
+                    <CardFooter className="justify-center border-t p-4">
+                      <Button size="sm" variant="ghost" className="gap-1">
+                        <PlusCircle className="h-3.5 w-3.5" />
+                        Create Ticket
+                      </Button>
+                    </CardFooter>
                   </CardContent>
                 </Card>
               </div>

@@ -113,16 +113,22 @@ export default function ProjectsPage() {
                   <TableBody>
                     <TableRow>
                       <TableCell className="hidden sm:table-cell">
-                        <Image
-                          alt="Project image"
-                          className="aspect-square rounded-md object-cover"
-                          height="64"
-                          src="/placeholder.svg"
-                          width="64"
-                        />
+                        {/* TODO: Update link routing w/ dynamic project id */}
+                        <Link href="/projects/123123">
+                          <Image
+                            alt="Project image"
+                            className="aspect-square rounded-md object-cover"
+                            height="64"
+                            src="/placeholder.svg"
+                            width="64"
+                          />
+                        </Link>
                       </TableCell>
                       <TableCell className="font-medium">
-                        Laser Lemonade Machine
+                        {/* TODO: Update link routing w/ dynamic project id */}
+                        <Link href="/projects/123123">
+                          Laser Lemonade Machine
+                        </Link>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">Draft</Badge>
