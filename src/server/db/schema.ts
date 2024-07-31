@@ -10,7 +10,9 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
+import { z } from "zod";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -125,6 +127,21 @@ export const verificationTokens = createTable(
 );
 
 // Schemas - validation for API requests
+export const baseSchema = createSelectSchema(projects);
+
+export const insertProjectSchema = createInsertSchema(projects);
+export const insertProjectParams = baseSchema
+  .extend({})
+  .omit({ id: true, createdById: true });
+
+export const updateProjectSchema = baseSchema;
+export const updateProjectParams = baseSchema.extend({}).omit({ id: true });
+
+export const projectIdSchema = baseSchema.pick({ id: true });
 
 // Types
 export type Project = typeof projects.$inferSelect;
+export type NewProject = z.infer<typeof insertProjectSchema>;
+export type NewProjectParams = z.infer<typeof insertProjectParams>;
+export type UpdateProjectParams = z.infer<typeof updateProjectParams>;
+export type ProjectId = z.infer<typeof projectIdSchema>["id"];

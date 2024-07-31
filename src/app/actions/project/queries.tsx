@@ -3,30 +3,42 @@
 import { and, eq } from "drizzle-orm";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
-import { projects } from "~/server/db/schema";
+import { type ProjectId, projectIdSchema, projects } from "~/server/db/schema";
 
 export const getProjects = async () => {
   const session = await getSession();
 
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("User not authenticated");
+  }
+
   const rows = await db
     .select()
     .from(projects)
-    .where(eq(projects.createdById, session?.user.id));
+    .where(eq(projects.createdById, session.user.id));
 
   if (rows === undefined) return {};
   const p = rows;
-
-  return { authors: p };
+  return { project: p };
 };
 
-export const getProjectById = async (id) => {
+export const getProjectById = async (id: ProjectId) => {
   const session = await getSession();
+
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("User not authenticated");
+  }
+
+  const { id: projectId } = projectIdSchema.parse({ id });
 
   const [row] = await db
     .select()
     .from(projects)
     .where(
-      and(eq(projects.id, id), eq(projects.createdById, session?.user.id)),
+      and(
+        eq(projects.id, projectId),
+        eq(projects.createdById, session.user.id),
+      ),
     );
 
   if (row === undefined) return {};
