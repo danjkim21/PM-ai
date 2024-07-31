@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   serial,
@@ -9,7 +10,9 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
+import { z } from "zod";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -19,11 +22,19 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `pm-ai_${name}`);
 
-export const posts = createTable(
-  "post",
+export const projectStatusEnum = pgEnum("status", [
+  "draft",
+  "active",
+  "archived",
+]);
+
+export const projects = createTable(
+  "project",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    title: varchar("title", { length: 256 }),
+    description: text("description"),
+    status: projectStatusEnum("status").default("draft"),
     createdById: varchar("createdById", { length: 255 })
       .notNull()
       .references(() => users.id),
@@ -34,8 +45,8 @@ export const posts = createTable(
   },
   (example) => ({
     createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+    nameIndex: index("title_idx").on(example.title),
+  }),
 );
 
 export const users = createTable("user", {
@@ -76,7 +87,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -96,7 +107,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -112,5 +123,25 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
+
+// Schemas - validation for API requests
+export const baseSchema = createSelectSchema(projects);
+
+export const insertProjectSchema = createInsertSchema(projects);
+export const insertProjectParams = baseSchema
+  .extend({})
+  .omit({ id: true, createdById: true });
+
+export const updateProjectSchema = baseSchema;
+export const updateProjectParams = baseSchema.extend({}).omit({ id: true });
+
+export const projectIdSchema = baseSchema.pick({ id: true });
+
+// Types
+export type Project = typeof projects.$inferSelect;
+export type NewProject = z.infer<typeof insertProjectSchema>;
+export type NewProjectParams = z.infer<typeof insertProjectParams>;
+export type UpdateProjectParams = z.infer<typeof updateProjectParams>;
+export type ProjectId = z.infer<typeof projectIdSchema>["id"];
