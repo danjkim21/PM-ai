@@ -1,12 +1,13 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
 import { type ProjectId, projectIdSchema, projects } from "~/server/db/schema";
 
 export const getProjects = async () => {
-  const session = await getSession();
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id) {
     throw new Error("User not authenticated");
@@ -19,11 +20,11 @@ export const getProjects = async () => {
 
   if (rows === undefined) return {};
   const p = rows;
-  return { project: p };
+  return { projects: p };
 };
 
 export const getProjectById = async (id: ProjectId) => {
-  const session = await getSession();
+  const session = await getServerSession(authOptions);
 
   if (!session || !session.user || !session.user.id) {
     throw new Error("User not authenticated");
