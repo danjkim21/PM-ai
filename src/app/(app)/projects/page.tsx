@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { MoreHorizontal, Search } from "lucide-react";
 
 import { Badge } from "~/components/ui/badge";
 import {
@@ -37,6 +37,7 @@ import {
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { getProjects } from "~/app/actions/project/queries";
+import ProjectSheet from "./ProjectSheet";
 
 export default async function ProjectsPage() {
   const { projects } = await getProjects();
@@ -81,12 +82,7 @@ export default async function ProjectsPage() {
               </TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
-              <Button size="sm" className="h-8 gap-1">
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Project
-                </span>
-              </Button>
+              <ProjectSheet />
             </div>
           </div>
           <TabsContent value="all">
