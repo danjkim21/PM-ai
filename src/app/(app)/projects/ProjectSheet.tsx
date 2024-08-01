@@ -54,7 +54,10 @@ export default function ProjectSheet() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const newProject = await createProject(values);
+      const newProject = await createProject({
+        title: values.title,
+        description: values.description ?? null,
+      });
 
       if (!newProject) {
         throw new Error("Failed to create project.");
