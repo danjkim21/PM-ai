@@ -1,6 +1,7 @@
 "use server";
 
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
 import {
   type NewProjectParams,
@@ -9,7 +10,8 @@ import {
 } from "~/server/db/schema";
 
 export const createProject = async (project: NewProjectParams) => {
-  const session = await getSession();
+  const session = await getServerSession(authOptions);
+
   const newProject = insertProjectSchema.parse({
     ...project,
     createdById: session?.user?.id,
@@ -18,7 +20,7 @@ export const createProject = async (project: NewProjectParams) => {
   try {
     const [a] = await db.insert(projects).values(newProject).returning();
 
-    return { authors: a };
+    return { project: a };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);

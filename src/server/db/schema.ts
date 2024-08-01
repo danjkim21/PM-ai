@@ -132,7 +132,13 @@ export const baseSchema = createSelectSchema(projects);
 export const insertProjectSchema = createInsertSchema(projects);
 export const insertProjectParams = baseSchema
   .extend({})
-  .omit({ id: true, createdById: true });
+  .omit({
+    id: true,
+    createdById: true,
+    createdAt: true,
+    updatedAt: true,
+    status: true,
+  });
 
 export const updateProjectSchema = baseSchema;
 export const updateProjectParams = baseSchema.extend({}).omit({ id: true });

@@ -1,8 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
-import { Badge } from "~/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +8,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,25 +16,24 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+
 import { Input } from "~/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { getProjects } from "~/app/actions/project/queries";
+import ProjectSheet from "./ProjectSheet";
+import ProjectTableRow from "./ProjectTableRow";
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const { projects } = await getProjects();
+  console.log(projects);
+
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -77,12 +73,7 @@ export default function ProjectsPage() {
               </TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">
-              <Button size="sm" className="h-8 gap-1">
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Add Project
-                </span>
-              </Button>
+              <ProjectSheet />
             </div>
           </div>
           <TabsContent value="all">
@@ -111,57 +102,19 @@ export default function ProjectsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell className="hidden sm:table-cell">
-                        {/* TODO: Update link routing w/ dynamic project id */}
-                        <Link href="/projects/123123">
-                          <Image
-                            alt="Project image"
-                            className="aspect-square rounded-md object-cover"
-                            height="64"
-                            src="/placeholder.svg"
-                            width="64"
-                          />
-                        </Link>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {/* TODO: Update link routing w/ dynamic project id */}
-                        <Link href="/projects/123123">
-                          Laser Lemonade Machine
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">Draft</Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        2023-07-12 10:42 AM
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-haspopup="true"
-                              size="icon"
-                              variant="ghost"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
+                    {projects?.map((project) => (
+                      <ProjectTableRow key={project.id} project={project} />
+                    ))}
                   </TableBody>
                 </Table>
               </CardContent>
               <CardFooter>
                 <div className="text-muted-foreground text-xs">
-                  Showing <strong>1-10</strong> of <strong>32</strong> Projects
+                  Showing{" "}
+                  <strong>
+                    {projects?.length}-{projects?.length}
+                  </strong>{" "}
+                  of <strong>{projects?.length}</strong> Projects
                 </div>
               </CardFooter>
             </Card>
