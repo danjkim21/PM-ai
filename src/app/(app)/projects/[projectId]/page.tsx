@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   ChevronLeft,
@@ -52,17 +50,21 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { useRouter } from "next/navigation";
+import { getProjectById } from "~/app/actions/project/queries";
 
-export default function ProjectDetailPage({
+export default async function ProjectDetailPage({
   params,
 }: {
   params: { projectId: string };
 }) {
-  const router = useRouter();
+  const { project } = await getProjectById(Number(params.projectId));
+  // const router = useRouter();
 
-  const navigateBack = () => {
-    router.back();
-  };
+  // const navigateBack = () => {
+  //   router.back();
+  // };
+
+  if (!project) return <div>Project not found</div>;
 
   return (
     <div className="bg-muted/40 flex min-h-screen w-full flex-col">
@@ -139,7 +141,7 @@ export default function ProjectDetailPage({
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <div className="mx-auto grid flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
-              <Button
+              {/* <Button
                 onClick={navigateBack}
                 variant="outline"
                 size="icon"
@@ -147,12 +149,12 @@ export default function ProjectDetailPage({
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="sr-only">Back</span>
-              </Button>
+              </Button> */}
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Project Title
+                {project.title}
               </h1>
               <Badge variant="outline" className="ml-auto sm:ml-0">
-                Active
+                {project.status}
               </Badge>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
                 <Button size="sm">Save Project</Button>
@@ -163,8 +165,8 @@ export default function ProjectDetailPage({
                 <Card x-chunk="dashboard-07-chunk-0">
                   <CardHeader>
                     <CardTitle>Project Details</CardTitle>
-                    <CardDescription>
-                      Lipsum dolor sit amet, consectetur adipiscing elit
+                    <CardDescription className="break-all">
+                      {project.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -175,14 +177,14 @@ export default function ProjectDetailPage({
                           id="name"
                           type="text"
                           className="w-full"
-                          defaultValue="Gamer Gear Pro Controller"
+                          defaultValue={project.title ?? ""}
                         />
                       </div>
                       <div className="grid gap-3">
                         <Label htmlFor="description">Description</Label>
                         <Textarea
                           id="description"
-                          defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc."
+                          defaultValue={project.description ?? ""}
                           className="min-h-32"
                         />
                       </div>
@@ -251,7 +253,7 @@ export default function ProjectDetailPage({
                         <Label htmlFor="status">Status</Label>
                         <Select>
                           <SelectTrigger id="status" aria-label="Select status">
-                            <SelectValue placeholder="Select status" />
+                            <SelectValue placeholder={project.status} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="draft">Draft</SelectItem>
