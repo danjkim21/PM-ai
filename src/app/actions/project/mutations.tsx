@@ -20,7 +20,7 @@ export const createProject = async (project: NewProjectParams) => {
   try {
     const [a] = await db.insert(projects).values(newProject).returning();
 
-    return { authors: a };
+    return { project: a };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);

@@ -17,7 +17,6 @@ export default function ProjectTableRow({ project }: { project: Project }) {
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        {/* TODO: Update link routing w/ dynamic project id */}
         <Link href={`/projects/${project.id}`}>
           <Image
             alt="Project image"
@@ -29,7 +28,6 @@ export default function ProjectTableRow({ project }: { project: Project }) {
         </Link>
       </TableCell>
       <TableCell className="font-medium">
-        {/* TODO: Update link routing w/ dynamic project id */}
         <Link href={`/projects/${project.id}`}>{project.title}</Link>
       </TableCell>
       <TableCell>
@@ -47,6 +45,7 @@ export default function ProjectTableRow({ project }: { project: Project }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {/* TODO - Add actions for editing project and deleting */}
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>

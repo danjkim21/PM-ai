@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { createProject } from "~/app/actions/project/mutations";
@@ -22,12 +23,12 @@ import {
   SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
 import { Textarea } from "~/components/ui/textarea";
+import { useToast } from "~/components/ui/use-toast";
 
 const formSchema = z.object({
   title: z
@@ -36,10 +37,13 @@ const formSchema = z.object({
       message: "Title must be at least 4 characters.",
     })
     .max(50),
-  description: z.string().max(500),
+  description: z.string().max(500).optional(),
 });
 
 export default function ProjectSheet() {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,19 +53,24 @@ export default function ProjectSheet() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    console.log(values);
-
     try {
-      if (!values.title || !values.description) {
-        throw new Error("Title and description are required");
+      const newProject = await createProject(values);
+
+      if (!newProject) {
+        throw new Error("Failed to create project.");
       }
 
-      const projectId = await createProject(values);
-      console.log(projectId);
+      router.refresh();
+      toast({
+        title: "Project created",
+        description: "Your project has been created successfully.",
+      });
     } catch (error) {
       if (error instanceof Error) {
-        console.error(error.message);
+        toast({
+          title: "Project creation failed",
+          description: error.message,
+        });
       } else {
         console.error("An unexpected error occurred.");
       }
@@ -123,12 +132,15 @@ export default function ProjectSheet() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="gap-1">
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Create Project
-                </span>
-              </Button>
+
+              <SheetClose asChild>
+                <Button type="submit" className="gap-1">
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Create Project
+                  </span>
+                </Button>
+              </SheetClose>
             </form>
           </Form>
         </div>
