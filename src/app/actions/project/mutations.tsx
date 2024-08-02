@@ -7,7 +7,7 @@ import { db } from "~/server/db";
 import {
   type NewProjectParams,
   type ProjectId,
-  UpdateProjectParams,
+  type UpdateProjectParams,
   insertProjectSchema,
   projectIdSchema,
   projects,
