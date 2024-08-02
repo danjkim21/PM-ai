@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +14,43 @@ import { TableCell, TableRow } from "~/components/ui/table";
 import Link from "next/link";
 import { MoreHorizontal } from "lucide-react";
 import { type Project } from "~/server/db/schema";
+import { deleteProject } from "~/app/actions/project/mutations";
+import { useRouter } from "next/navigation";
+import { useToast } from "~/components/ui/use-toast";
 
 export default function ProjectTableRow({ project }: { project: Project }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const onEdit = () => {
+    console.log("edit", project.id);
+    router.push(`/projects/${project.id}`);
+  };
+  const onDelete = async () => {
+    try {
+      const deletedProject = await deleteProject(project.id);
+
+      if (!deletedProject) {
+        throw new Error("Failed to create project.");
+      }
+
+      router.refresh();
+      toast({
+        title: "Project deleted",
+        description: "Your project has been deleted successfully.",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: "Project deletion failed",
+          description: error.message,
+        });
+      } else {
+        console.error("An unexpected error occurred.");
+      }
+    }
+  };
+
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
@@ -30,11 +67,14 @@ export default function ProjectTableRow({ project }: { project: Project }) {
       <TableCell className="font-medium">
         <Link href={`/projects/${project.id}`}>{project.title}</Link>
       </TableCell>
-      <TableCell>
+      <TableCell className="hidden sm:table-cell">
         <Badge variant="outline">{project.status}</Badge>
       </TableCell>
       <TableCell className="hidden md:table-cell">
         {project.createdAt.toDateString()}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {project.updatedAt ? project.updatedAt.toDateString() : "No updates"}
       </TableCell>
       <TableCell>
         <DropdownMenu>
@@ -45,10 +85,14 @@ export default function ProjectTableRow({ project }: { project: Project }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {/* TODO - Add actions for editing project and deleting */}
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-700 focus:text-red-600"
+              onClick={onDelete}
+            >
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,32 +7,12 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-
 import { Input } from "~/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { getProjects } from "~/app/actions/project/queries";
 import ProjectSheet from "./ProjectSheet";
-import ProjectTableRow from "./ProjectTableRow";
+import ProjectTable from "./ProjectTable";
 
 export default async function ProjectsPage() {
-  const { projects } = await getProjects();
-  console.log(projects);
-
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <header className="bg-background sticky top-0 z-30 flex h-14 items-center gap-4 border-b px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -77,47 +56,7 @@ export default async function ProjectsPage() {
             </div>
           </div>
           <TabsContent value="all">
-            <Card x-chunk="dashboard-06-chunk-0">
-              <CardHeader>
-                <CardTitle>Projects</CardTitle>
-                <CardDescription>
-                  Manage your Projects and generate tickets.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="hidden w-[100px] sm:table-cell">
-                        <span className="sr-only">Image</span>
-                      </TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Created at
-                      </TableHead>
-                      <TableHead>
-                        <span className="sr-only">Actions</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {projects?.map((project) => (
-                      <ProjectTableRow key={project.id} project={project} />
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <div className="text-muted-foreground text-xs">
-                  Showing{" "}
-                  <strong>
-                    {projects?.length}-{projects?.length}
-                  </strong>{" "}
-                  of <strong>{projects?.length}</strong> Projects
-                </div>
-              </CardFooter>
-            </Card>
+            <ProjectTable />
           </TabsContent>
         </Tabs>
       </main>
