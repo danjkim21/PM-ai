@@ -67,11 +67,14 @@ export default function ProjectTableRow({ project }: { project: Project }) {
       <TableCell className="font-medium">
         <Link href={`/projects/${project.id}`}>{project.title}</Link>
       </TableCell>
-      <TableCell>
+      <TableCell className="hidden sm:table-cell">
         <Badge variant="outline">{project.status}</Badge>
       </TableCell>
       <TableCell className="hidden md:table-cell">
         {project.createdAt.toDateString()}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {project.updatedAt ? project.updatedAt.toDateString() : "No updates"}
       </TableCell>
       <TableCell>
         <DropdownMenu>

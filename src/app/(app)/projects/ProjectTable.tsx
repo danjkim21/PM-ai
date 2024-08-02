@@ -35,8 +35,13 @@ export default async function ProjectTable() {
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                Status
+              </TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">
+                Last updated at
+              </TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
