@@ -1,10 +1,4 @@
-import {
-  Book,
-  LifeBuoy,
-  Settings2,
-  SquareTerminal,
-  SquareUser,
-} from "lucide-react";
+import { Book, LifeBuoy, SquareTerminal, SquareUser } from "lucide-react";
 
 export const webLinks = [
   { href: "#features", title: "Features" },
@@ -17,7 +11,6 @@ export const webLinks = [
 export const appPageLinks = [
   { href: "/playground", title: "Playground", icon: SquareTerminal },
   { href: "/projects", title: "Projects", icon: Book },
-  { href: "/settings", title: "Settings", icon: Settings2 },
 ];
 
 export const appMoreLinks = [
