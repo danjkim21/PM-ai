@@ -1,9 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { updateProject } from "~/app/actions/project/mutations";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
@@ -23,38 +25,50 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { useToast } from "~/components/ui/use-toast";
-import { type ProjectStatus } from "~/server/db/schema";
+import { Project, type ProjectStatus } from "~/server/db/schema";
 
 const formSchema = z.object({
   status: z.enum(["draft", "active", "archived"]),
 });
 
-export default function ProjectStatusCard({
-  projectStatus,
-}: {
-  projectStatus: ProjectStatus;
-}) {
+export default function ProjectStatusCard({ project }: { project: Project }) {
+  const router = useRouter();
   const [editable, setEditable] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: projectStatus,
+      status: project.status,
     },
   });
 
   const onUpdate = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    // try {
-    //   // TODO: Update logic
-    // } catch (error) {
-    //   toast({
-    //     title: "Error",
-    //     description: error.message,
-    //     variant: "destructive",
-    //   });
-    // }
+    try {
+      const updatedProject = await updateProject(project.id, {
+        ...project,
+        status: values.status,
+      });
+
+      if (!updatedProject) {
+        throw new Error("Failed to update project.");
+      }
+
+      router.refresh();
+      toast({
+        title: "Project updated",
+        description: "Your project has been updated successfully.",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: "Project update failed",
+          description: error.message,
+        });
+      } else {
+        console.error("An unexpected error occurred.");
+      }
+    }
   };
 
   return (

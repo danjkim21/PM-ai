@@ -139,7 +139,9 @@ export const insertProjectParams = baseSchema.extend({}).omit({
 });
 
 export const updateProjectSchema = baseSchema;
-export const updateProjectParams = baseSchema.extend({}).omit({ id: true });
+export const updateProjectParams = baseSchema
+  .extend({})
+  .omit({ id: true, createdById: true, createdAt: true });
 
 export const projectIdSchema = baseSchema.pick({ id: true });
 export const projectStatusSchema = baseSchema.pick({ status: true });

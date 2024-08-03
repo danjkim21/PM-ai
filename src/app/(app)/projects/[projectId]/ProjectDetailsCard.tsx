@@ -1,9 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { updateProject } from "~/app/actions/project/mutations";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -24,6 +26,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { useToast } from "~/components/ui/use-toast";
+import { type Project } from "~/server/db/schema";
 
 const formSchema = z.object({
   title: z
@@ -35,28 +38,36 @@ const formSchema = z.object({
   description: z.string().max(500).optional(),
 });
 
-export default function ProjectDetailsCard({
-  projectTitle,
-  projectDescription,
-}: {
-  projectTitle: string;
-  projectDescription: string;
-}) {
+export default function ProjectDetailsCard({ project }: { project: Project }) {
+  const router = useRouter();
   const [editable, setEditable] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: projectTitle,
-      description: projectDescription,
+      title: project.title ?? "",
+      description: project.description ?? "",
     },
   });
 
   const onUpdate = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     try {
-      // TODO: Update logic
+      const updatedProject = await updateProject(project.id, {
+        ...project,
+        title: values.title,
+        description: values.description ?? null,
+      });
+
+      if (!updatedProject) {
+        throw new Error("Failed to update project.");
+      }
+
+      router.refresh();
+      toast({
+        title: "Project updated",
+        description: "Your project has been updated successfully.",
+      });
     } catch (error) {
       if (error instanceof Error) {
         toast({
@@ -74,7 +85,7 @@ export default function ProjectDetailsCard({
       <CardHeader>
         <CardTitle>Project Details</CardTitle>
         <CardDescription className="break-all">
-          {projectDescription}
+          {project.description ?? "No description"}
         </CardDescription>
       </CardHeader>
       <CardContent>

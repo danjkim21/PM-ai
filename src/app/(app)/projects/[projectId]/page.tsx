@@ -151,10 +151,7 @@ export default async function ProjectDetailPage({
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
-                <ProjectDetailsCard
-                  projectTitle={project.title ?? ""}
-                  projectDescription={project.description ?? ""}
-                />
+                <ProjectDetailsCard project={project} />
 
                 {/* TODO: Refactor card and update when project tickets backend is ready */}
                 <Card x-chunk="dashboard-07-chunk-0">
@@ -209,7 +206,7 @@ export default async function ProjectDetailPage({
                 </Card>
               </div>
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                <ProjectStatusCard projectStatus={project.status} />
+                <ProjectStatusCard project={project} />
 
                 {/* TODO: Refactor card and update when project resources backend is ready */}
                 <Card x-chunk="dashboard-07-chunk-5">
