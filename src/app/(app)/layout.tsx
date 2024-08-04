@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import Sidebar from "~/components/sidebar/Sidebar";
 import {
   Breadcrumb,
@@ -17,6 +17,8 @@ import { Toaster } from "~/components/ui/toaster";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
+  const pathname = usePathname();
+  const pathItems = pathname.split("/").slice(1);
 
   if (status === "unauthenticated") redirect("/");
 
@@ -31,12 +33,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <Link href="/">Dashboard</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/projects">Account</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+
+            {!pathItems.includes("dashboard") &&
+              pathItems.map((item) => (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link href={`/${item}`}>{item}</Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              ))}
           </BreadcrumbList>
         </Breadcrumb>
         <div className="relative ml-auto flex-1 md:grow-0">
