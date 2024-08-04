@@ -34,7 +34,7 @@ export const projects = createTable(
     id: serial("id").primaryKey(),
     title: varchar("title", { length: 256 }),
     description: text("description"),
-    status: projectStatusEnum("status").default("draft"),
+    status: projectStatusEnum("status").default("draft").notNull(),
     createdById: varchar("createdById", { length: 255 })
       .notNull()
       .references(() => users.id),
@@ -130,20 +130,21 @@ export const verificationTokens = createTable(
 export const baseSchema = createSelectSchema(projects);
 
 export const insertProjectSchema = createInsertSchema(projects);
-export const insertProjectParams = baseSchema
-  .extend({})
-  .omit({
-    id: true,
-    createdById: true,
-    createdAt: true,
-    updatedAt: true,
-    status: true,
-  });
+export const insertProjectParams = baseSchema.extend({}).omit({
+  id: true,
+  createdById: true,
+  createdAt: true,
+  updatedAt: true,
+  status: true,
+});
 
 export const updateProjectSchema = baseSchema;
-export const updateProjectParams = baseSchema.extend({}).omit({ id: true });
+export const updateProjectParams = baseSchema
+  .extend({})
+  .omit({ id: true, createdById: true, createdAt: true });
 
 export const projectIdSchema = baseSchema.pick({ id: true });
+export const projectStatusSchema = baseSchema.pick({ status: true });
 
 // Types
 export type Project = typeof projects.$inferSelect;
@@ -151,3 +152,4 @@ export type NewProject = z.infer<typeof insertProjectSchema>;
 export type NewProjectParams = z.infer<typeof insertProjectParams>;
 export type UpdateProjectParams = z.infer<typeof updateProjectParams>;
 export type ProjectId = z.infer<typeof projectIdSchema>["id"];
+export type ProjectStatus = z.infer<typeof projectStatusSchema>["status"];
