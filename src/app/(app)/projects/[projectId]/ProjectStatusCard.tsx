@@ -117,7 +117,7 @@ export default function ProjectStatusCard({ project }: { project: Project }) {
               )}
               {!editable && (
                 <Button className="gap-1" onClick={() => setEditable(true)}>
-                  <span className="sm:whitespace-nowrap">Edit Details</span>
+                  <span className="sm:whitespace-nowrap">Edit Status</span>
                 </Button>
               )}
             </div>
